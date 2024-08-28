@@ -8,6 +8,12 @@ let chars_wrong = 0;
 let start_time = new Date().getTime();
 let started = false;
 let update_wpm_interval_id = null;
+const typing_element = document.getElementById("typing");
+const wpm_element = document.getElementById("wpm");
+const finish_padding_element = document.getElementById("finish-padding");
+const finish_element = document.getElementById("finish");
+const accuracy_number = document.getElementById("accuracy-num");
+const kb = document.getElementById("keyboard");
 
 // Functions for updating the ui
 function lerp(a, b, t) {
@@ -22,21 +28,20 @@ function gen_color(t) {
 }
 function update_underline() {
   const char = character_objects[character_index];
-  const ty = document.getElementById("typing");
 
   if (char != null) {
     const char_rect = char.getBoundingClientRect();
-    const ty_rect = ty.getBoundingClientRect();
+    const ty_rect = typing_element.getBoundingClientRect();
 
     // ty.scroll(0, rect.top + ty.scrollTop);
 
     underline_target = {
       x: char_rect.left - ty_rect.left,
-      y: ty.scrollTop + char_rect.bottom,
+      y: typing_element.scrollTop + char_rect.bottom,
       w: char_rect.width,
     };
-    ty.scroll({
-      top: char_rect.top + ty.scrollTop - char_rect.height * 0.2,
+    typing_element.scroll({
+      top: char_rect.top + typing_element.scrollTop - char_rect.height * 0.2,
       behavior: "smooth",
     });
 
@@ -57,15 +62,13 @@ function update_underline() {
   }
 }
 function update_wpm() {
-  var now = new Date().getTime();
-
-  var elapsed = (now - start_time) / 1000;
-
-  var wpm = (words_typed / elapsed) * 60;
-
-  document.getElementById("wpm").innerText = wpm.toFixed(0);
+  const now = new Date().getTime();
+  const elapsed = (now - start_time) / 1000;
+  const wpm = (words_typed / elapsed) * 60;
 
   const wpm_coef = 1.0 - Math.exp(wpm * -0.01);
+
+  wpm_element.innerText = wpm.toFixed(0);
 
   document.documentElement.style.setProperty(
     "--wpm-offset",
@@ -76,14 +79,14 @@ function update_wpm() {
     gen_color(wpm_coef),
   );
 }
+
 function update_accuracy() {
   const accuracy = 1.0 - chars_wrong / chars_typed;
   document.documentElement.style.setProperty(
     "--accuracy-offset",
     (1.0 - accuracy) * 610,
   );
-  document.getElementById("accuracy-num").innerText =
-    (accuracy * 100).toFixed(0) + "%";
+  accuracy_number.innerText = (accuracy * 100).toFixed(0) + "%";
 
   document.documentElement.style.setProperty(
     "--accuracy-color",
@@ -93,8 +96,6 @@ function update_accuracy() {
 
 // Functions for creating the on screen keyboard
 function fill_keyboard() {
-  const kb = document.getElementById("keyboard");
-
   const layout = ["qwertyuiop", "asdfghjkl", "zxcvbnm"];
 
   for (let i = 0; i < 3; i++) {
@@ -190,7 +191,6 @@ function on_keydown(event) {
     if (event.key == full_text[character_index]) {
       c.classList.add("char-right");
     } else {
-      console.log('"' + full_text[character_index] + ' "' + event.key + '"');
       c.classList.add("char-wrong");
       chars_wrong++;
     }
@@ -200,24 +200,17 @@ function on_keydown(event) {
 
     character_index++;
     if (character_index == character_objects.length) {
-      const fin = document.getElementById("finish");
-      const fin_pad = document.getElementById("finish-padding");
-
-      fin.classList.remove("hidden");
-      fin.classList.remove("short");
-      fin_pad.classList.add("tall");
-      fin_pad.classList.remove("short");
-      fin_pad.classList.remove("hidden ");
-
-      const ty = document.getElementById("typing");
+      finish_element.classList.remove("colapsed");
+      finish_padding_element.classList.remove("colapsed");
 
       clearInterval(update_wpm_interval_id);
 
-      ty.scroll({
-        top: ty.scrollTopMax,
+      typing_element.scroll({
+        top: typing_element.scrollTopMax,
         behavior: "smooth",
       });
 
+      character_index--;
       return;
     }
   }
@@ -226,7 +219,10 @@ function on_keydown(event) {
 }
 
 function reset() {
+  finish_element.classList.add("colapsed");
+  finish_padding_element.classList.add("colapsed");
   create_typing_display(full_text);
+  update_underline();
 }
 
 addEventListener("keydown", on_keydown);
@@ -276,13 +272,11 @@ function create_space(output_arr) {
 }
 
 function create_typing_display(text) {
-  text += "\n" * 10;
   character_index = 0;
   chars_typed = 0;
   chars_wrong = 0;
   words_typed = 0;
   console.log(text);
-  const typing_display = document.getElementById("typing");
   full_text = text;
   const atoms = parse_words_and_spaces(full_text);
 
@@ -302,15 +296,17 @@ function create_typing_display(text) {
     }
   }
 
-  let fin = document.getElementById("finish-padding");
   atoms.forEach((atom) => {
     if (atom != null) {
-      typing_display.insertBefore(
+      typing_element.insertBefore(
         render_typable_word(atom, character_objects),
-        fin,
+        finish_padding_element,
       );
     } else {
-      typing_display.insertBefore(create_space(character_objects), fin);
+      typing_element.insertBefore(
+        create_space(character_objects),
+        finish_padding_element,
+      );
     }
   });
 
