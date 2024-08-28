@@ -81,12 +81,19 @@ function update_wpm() {
 }
 
 function update_accuracy() {
-  const accuracy = 1.0 - chars_wrong / chars_typed;
+  let accuracy;
+  if (chars_typed == 0) {
+    accuracy = 0.0;
+    accuracy_number.innerText = "N/a";
+  } else {
+    accuracy = 1.0 - chars_wrong / chars_typed;
+    accuracy_number.innerText = (accuracy * 100).toFixed(0) + "%";
+  }
+
   document.documentElement.style.setProperty(
     "--accuracy-offset",
     (1.0 - accuracy) * 610,
   );
-  accuracy_number.innerText = (accuracy * 100).toFixed(0) + "%";
 
   document.documentElement.style.setProperty(
     "--accuracy-color",
@@ -177,9 +184,13 @@ function on_keydown(event) {
   unhighlight_char(character_index);
   if (event.key == "Backspace") {
     character_index--;
+    if (character_index < 0) {
+      character_index = 0;
+    }
     unhighlight_char(character_index);
     if (full_text[character_index] == " ") {
       words_typed--;
+
       update_wpm();
     }
   } else {
@@ -219,10 +230,15 @@ function on_keydown(event) {
 }
 
 function reset() {
+  clearInterval(update_wpm_interval_id);
   finish_element.classList.add("colapsed");
   finish_padding_element.classList.add("colapsed");
   create_typing_display(full_text);
   update_underline();
+  update_wpm();
+  update_accuracy();
+  document.documentElement.style.setProperty("--wpm-color", "");
+  document.documentElement.style.setProperty("--accuracy-color", "");
 }
 
 addEventListener("keydown", on_keydown);
@@ -246,7 +262,8 @@ function parse_words_and_spaces(text) {
 addEventListener("paste", (event) => {
   const paste = (event.clipboardData || window.clipboardData).getData("text");
   paste.replace(/\s+/g, " ").replace(/’/g, "'").replace(/”/g, '"').trim();
-  create_typing_display(paste);
+  full_text = paste;
+  reset();
 });
 
 function render_typable_word(words, output_arr) {
