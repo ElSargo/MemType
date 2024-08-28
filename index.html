@@ -1,0 +1,73 @@
+<!doctype html>
+<head>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="typing" id="typing">
+        <div class="under" id="under"></div>
+        <div style="height: 130%" id="finish-padding" class="hidden"></div>
+        <div class="finish hidden" id="finish">
+            <span>All done!</span>
+            <button onclick="reset()" class="reset">reset!</button>
+        </div>
+    </div>
+    <div id="ui" class="ui">
+        <div style="height: 100%; aspect-ratio: 1">
+            <div class="outer-c">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    version="1.1"
+                    width="100%"
+                    height="100%"
+                    style="position: absolute; top: 0; left: 0"
+                >
+                    <circle
+                        cx="50%"
+                        cy="50%"
+                        r="45%"
+                        stroke-linecap="round"
+                        style="
+                            stroke-dashoffset: var(--wpm-offset, 610);
+                            stroke: var(--wpm-color, #ff0000);
+                        "
+                    />
+                </svg>
+                <div class="inner-c">
+                    <span class="stat-num" id="wpm">N/a</span>
+                    <span class="stat-label">WPM</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="keyboard" id="keyboard"></div>
+
+        <div style="height: 100%; aspect-ratio: 1">
+            <div class="outer-c">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    version="1.1"
+                    width="100%"
+                    height="100%"
+                    style="position: absolute; top: 0; left: 0"
+                >
+                    <circle
+                        cx="50%"
+                        cy="50%"
+                        r="45%"
+                        stroke-linecap="round"
+                        style="
+                            stroke-dashoffset: var(--accuracy-offset);
+                            stroke: var(--accuracy-color);
+                        "
+                    />
+                </svg>
+                <div class="inner-c">
+                    <span class="stat-num" id="accuracy-num">N/a</span>
+                    <span class="stat-label">Accuracy</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="fill_keys.js"></script>
+</body>
