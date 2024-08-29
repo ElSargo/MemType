@@ -14,6 +14,7 @@ const finish_padding_element = document.getElementById("finish-padding");
 const finish_element = document.getElementById("finish");
 const accuracy_number = document.getElementById("accuracy-num");
 const kb = document.getElementById("keyboard");
+const prompt_element = document.getElementById("prompt");
 
 // Functions for updating the ui
 function lerp(a, b, t) {
@@ -263,6 +264,7 @@ addEventListener("paste", (event) => {
   const paste = (event.clipboardData || window.clipboardData).getData("text");
   paste.replace(/\s+/g, " ").replace(/’/g, "'").replace(/”/g, '"').trim();
   full_text = paste;
+  prompt_element.className = "colapsed";
   reset();
 });
 
@@ -334,9 +336,6 @@ function create_typing_display(text) {
 
 function on_load() {
   fill_keyboard();
-  create_typing_display(
-    "Now that you’ve learned a bit more about CSS gradients, and why they are so useful, keep your eye out for them in the services you already use on a daily basis. You’ll find them in logos, advertisements, fortune-500 websites, mobile apps and streaming services. Because they are code-based they add little to no loading time and their effect can be quite dramatic.",
-  );
   update_underline();
 }
 

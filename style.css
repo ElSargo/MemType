@@ -22,7 +22,6 @@
     border-radius: 3rem;
     cursor: pointer;
     display: inline-block;
-    transition: all 0.3s ease-out;
 
     aspect-ratio: 1;
 
@@ -177,6 +176,25 @@ body {
     display: flex;
     flex-direction: row;
     background: rgba(239, 239, 239);
+}
+
+.prompt > span {
+    font-size: 3rem;
+}
+.prompt {
+    width: 90%;
+    margin-left: 5%;
+    margin-right: 5%;
+    height: fit-content;
+    padding: 2rem;
+    color: rgba(100, 100, 100, 1);
+    background: #f5f5f5;
+    border-radius: 2rem;
+    box-shadow:
+        inset -3px -3px 4px rgba(10, 40, 100, 0.1),
+        inset 3px 3px 4px rgba(255, 241, 216, 0.18),
+        -13px -13px 8px rgba(255, 241, 216, 0.18),
+        13px 13px 8px rgba(10, 40, 100, 0.3);
 }
 
 .wpm {
