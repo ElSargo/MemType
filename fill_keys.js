@@ -238,8 +238,8 @@ function reset() {
   update_underline();
   update_wpm();
   update_accuracy();
-  document.documentElement.style.setProperty("--wpm-color", "");
-  document.documentElement.style.setProperty("--accuracy-color", "");
+  document.documentElement.style.setProperty("--wpm-color", null);
+  document.documentElement.style.setProperty("--accuracy-color", null);
 }
 
 addEventListener("keydown", on_keydown);
